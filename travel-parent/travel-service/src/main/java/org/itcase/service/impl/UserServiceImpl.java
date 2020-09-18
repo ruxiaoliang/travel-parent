@@ -63,11 +63,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void loginOutUser() {
-
+        subjectUserContext.deleteSubject();
     }
 
     @Override
     public Boolean isLogin() {
-        return null;
+        return subjectUserContext.existSubject();
     }
 }

@@ -26,4 +26,40 @@ public class UserServiceTest extends TestConfig {
 
         log.info("注册结果为" + flag);
     }
+
+
+    @Test
+    public void testLoginUser(){
+
+            UserVo userVoResult = userService.loginUser(UserVo.builder()
+                .username("yunWuYue")
+                .password("123")
+                .build());
+            log.info("testLoginUser----通过--->{}",userVoResult);
+    }
+
+    @Test
+    public void testLoginOutUser(){
+        UserVo userVoResult = userService.loginUser(UserVo.builder()
+                .username("yunWuYue")
+                .password("123")
+                .build());
+        log.info("testLoginUser----通过--->{}",userVoResult.toString());
+
+        log.info("testLoginOutUser----开始");
+        userService.loginOutUser();
+    }
+
+    @Test
+    public void testIsLogin(){
+        UserVo userVoResult = userService.loginUser(UserVo.builder()
+                .username("yunWuYue")
+                .password("123")
+                .build());
+        log.info("testLoginUser----通过--->{}",userVoResult.toString());
+
+        log.info("testLoginOutUser----开始");
+        Boolean flag = userService.isLogin();
+        log.info("testIsLogin----通过--->{}",flag);
+    }
 }
