@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * @Description：用于存储当前登录后放入session中的user对象
+ * @Description：用于存储当前登录后放入session中的seller对象
  */
 @Data
 @NoArgsConstructor

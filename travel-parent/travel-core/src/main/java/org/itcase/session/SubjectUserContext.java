@@ -35,18 +35,19 @@ public class SubjectUserContext {
      */
     public SubjectUser getSubject() {
         String accessToken = null;
-        if (Boolean.valueOf(isTest)){
+        if (Boolean.parseBoolean(isTest)){
             accessToken ="subjectUser10101";
         }else {
             accessToken = request.getHeader(Constant.ACCESS_TOKEN);
         }
         Object subject = session.getAttribute(accessToken);
         SubjectUser subjectUser = null;
+        //进行对象转换，真正需要执行的语句
         if (!EmptyUtil.isNullOrEmpty(subject)&&subject instanceof SubjectUser){
             subjectUser = (SubjectUser) subject;
         }
         log.info("【获得】sessionId:"+session.getId());
-        if (Boolean.valueOf(isTest)&&!EmptyUtil.isNullOrEmpty(subjectUser)){
+        if (Boolean.parseBoolean(isTest)&&!EmptyUtil.isNullOrEmpty(subjectUser)){
             subjectUser.setToken("subjectUser10101");
         }
         return subjectUser;
@@ -56,7 +57,7 @@ public class SubjectUserContext {
      * @Description 全局对象放入session
      */
     public  void createdSubject(String key,Object Principal) {
-        if (Boolean.valueOf(isTest)){
+        if (Boolean.parseBoolean(isTest)){
             session.setAttribute("subjectUser10101", Principal);
         }else {
             session.setAttribute(key, Principal);
@@ -69,7 +70,7 @@ public class SubjectUserContext {
      */
     public  void deleteSubject() {
         String accessToken = null;
-        if (Boolean.valueOf(isTest)){
+        if (Boolean.parseBoolean(isTest)){
             accessToken ="subjectUser10101";
         }else {
             accessToken = request.getHeader(Constant.ACCESS_TOKEN);

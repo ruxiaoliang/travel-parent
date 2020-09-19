@@ -1,6 +1,7 @@
 package org.itcase.basic;
 
 import org.itcase.config.SpringConfig;
+import org.itcase.service.FavoriteService;
 import org.itcase.service.UserService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,4 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public abstract class TestConfig {
     @Autowired
     public UserService userService;
+
+    @Autowired
+    public FavoriteService favoriteService;
 }
