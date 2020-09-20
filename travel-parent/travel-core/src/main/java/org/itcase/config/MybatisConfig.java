@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.github.pagehelper.PageInterceptor;
 import org.apache.ibatis.logging.log4j2.Log4j2Impl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.itcase.interceptor.PrimaryKeyInterceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,7 +91,7 @@ public class MybatisConfig {
         sqlSessionFactoryBean.setConfiguration(configuration);
 
         //插件
-        sqlSessionFactoryBean.setPlugins(new Interceptor[]{initPageInterceptor()});
+        sqlSessionFactoryBean.setPlugins(new Interceptor[]{initPageInterceptor(),initPrimaryKeyInterceptor()});
 
         return sqlSessionFactoryBean;
     }
@@ -112,6 +113,31 @@ public class MybatisConfig {
         properties.setProperty("rowBoundsWithCount", "true");
         pageInterceptor.setProperties(properties);
         return pageInterceptor;
+    }
+
+
+    /**
+     * @Description 雪花算法支持
+     * 从db.properties中获取参数
+     */
+    @Bean
+    public SnowflakeIdWorker snowflakeIdWorker(){
+        return new SnowflakeIdWorker(Integer.parseInt(workerId), Integer.parseInt(datacenterId));
+    }
+
+    /**
+     * @Description 主键生成拦截
+     * 创建拦截器对象，交由IOC容器管理
+     */
+    @Bean
+    public PrimaryKeyInterceptor initPrimaryKeyInterceptor(){
+        PrimaryKeyInterceptor primaryKeyInterceptor =  new PrimaryKeyInterceptor();
+        Properties properties = new Properties();
+        //primaryKey自定义的键名称   id需要替换的字段
+        properties.setProperty("primaryKey", "id");
+        primaryKeyInterceptor.setProperties(properties);
+        primaryKeyInterceptor.setSnowflakeIdWorker(snowflakeIdWorker());
+        return primaryKeyInterceptor;
     }
 
 }

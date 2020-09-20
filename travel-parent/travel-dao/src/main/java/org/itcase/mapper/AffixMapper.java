@@ -10,7 +10,6 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
@@ -33,18 +32,16 @@ public interface AffixMapper {
     int deleteByPrimaryKey(Long id);
 
     @Insert({
-        "insert into tab_affix (business_id, business_type, ",
-        "suffix, file_name, ",
-        "path_url)",
-        "values (#{businessId,jdbcType=BIGINT}, #{businessType,jdbcType=VARCHAR}, ",
-        "#{suffix,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, ",
-        "#{pathUrl,jdbcType=VARCHAR})"
+        "insert into tab_affix (id, business_id, ",
+        "business_type, suffix, ",
+        "file_name, path_url)",
+        "values (#{id,jdbcType=BIGINT}, #{businessId,jdbcType=BIGINT}, ",
+        "#{businessType,jdbcType=VARCHAR}, #{suffix,jdbcType=VARCHAR}, ",
+        "#{fileName,jdbcType=VARCHAR}, #{pathUrl,jdbcType=VARCHAR})"
     })
-    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="id", before=false, resultType=Long.class)
     int insert(Affix record);
 
     @InsertProvider(type=AffixSqlProvider.class, method="insertSelective")
-    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="id", before=false, resultType=Long.class)
     int insertSelective(Affix record);
 
     @SelectProvider(type=AffixSqlProvider.class, method="selectByExample")
