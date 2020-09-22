@@ -140,6 +140,12 @@
       <artifactId>commons-beanutils</artifactId>
     </dependency>
 
+    <!--redisson 依赖-->
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

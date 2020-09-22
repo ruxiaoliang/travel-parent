@@ -1,6 +1,5 @@
 package org.itcase.req;
 
-import org.itcase.pojo.Affix;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -81,6 +80,16 @@ public class RouteVo implements Serializable {
      * 最高价格
      */
     private BigDecimal maxPrice;
+
+    /**
+     * 排序
+     */
+    private String orderBy;
+
+    /**
+     * 图片信息
+     */
+    private List<AffixVo> affixVoList;
 
     private static final long serialVersionUID = 1L;
 

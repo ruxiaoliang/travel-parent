@@ -9,8 +9,10 @@ import org.itcase.mapperExt.RouteMapperExt;
 import org.itcase.pojo.Favorite;
 import org.itcase.pojo.FavoriteExample;
 import org.itcase.pojo.Route;
+import org.itcase.req.AffixVo;
 import org.itcase.req.FavoriteVo;
 import org.itcase.req.RouteVo;
+import org.itcase.service.AffixService;
 import org.itcase.service.FavoriteService;
 import org.itcase.session.SubjectUser;
 import org.itcase.session.SubjectUserContext;
@@ -38,6 +40,9 @@ public class FavoriteServiceImpl  implements FavoriteService {
     @Autowired
     private RouteMapper routeMapper;
 
+    @Autowired
+    AffixService affixService;
+
     @Override
     public PageInfo<RouteVo> findMyFavorite(FavoriteVo favoriteVo, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
@@ -51,7 +56,13 @@ public class FavoriteServiceImpl  implements FavoriteService {
         BeanConv.toBean(pageInfo,pageInfoVo);
 
         //对象拷贝之后进行数据的拷贝
-        pageInfoVo.setList(BeanConv.toBeanList(pageInfo.getList(),RouteVo.class));
+        List<RouteVo> routeVoList = BeanConv.toBeanList(pageInfo.getList(), RouteVo.class);
+        pageInfoVo.setList(routeVoList);
+        //处理图片问题
+        for (RouteVo routeVo : routeVoList) {
+            AffixVo affixVo = AffixVo.builder().businessId(routeVo.getId()).build();
+            routeVo.setAffixVoList(affixService.findAffixByBusinessId(affixVo));
+        }
         return pageInfoVo;
     }
 

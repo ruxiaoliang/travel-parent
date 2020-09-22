@@ -1,11 +1,13 @@
 package org.itcase.service.impl;
 
 import org.itcase.config.SnowflakeIdWorker;
+import org.itcase.constant.RedisConstant;
 import org.itcase.mapper.AffixMapper;
 import org.itcase.pojo.Affix;
 import org.itcase.pojo.AffixExample;
 import org.itcase.req.AffixVo;
 import org.itcase.service.AffixService;
+import org.itcase.service.RedisCacheService;
 import org.itcase.utils.BeanConv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +25,13 @@ import java.util.List;
 public class AffixServiceImpl implements AffixService {
 
     @Autowired
-    AffixMapper affixMapper;
+    private AffixMapper affixMapper;
 
     @Autowired
-    SnowflakeIdWorker snowflakeIdWorker;
+    private SnowflakeIdWorker snowflakeIdWorker;
+
+    @Autowired
+    private RedisCacheService redisCacheService;
 
     @Value("upLoad.pathRoot")
     String pathRoot;
@@ -70,15 +75,29 @@ public class AffixServiceImpl implements AffixService {
     @Override
     public Boolean bindBusinessId(AffixVo affixVo) {
         Affix affix = BeanConv.toBean(affixVo, Affix.class);
-        int flag = affixMapper.updateByPrimaryKeySelective(affix);
-        return flag>0;
+        int times = affixMapper.updateByPrimaryKeySelective(affix);
+        boolean flag = times > 0;
+        if (flag){
+            //更新删除缓存
+            String key = RedisConstant.AFFIXSERVICE_FINDAFFIXBYBUSINESSID +affixVo.getBusinessId();
+            redisCacheService.deleListCache(key);
+        }
+        return flag;
     }
 
     @Override
     public List<AffixVo> findAffixByBusinessId(AffixVo affixVo) {
-        AffixExample example = new AffixExample();
+        /*AffixExample example = new AffixExample();
         example.createCriteria().andBusinessIdEqualTo(affixVo.getBusinessId());
         List<Affix> affixes = affixMapper.selectByExample(example);
-        return BeanConv.toBeanList(affixes, AffixVo.class);
+        return BeanConv.toBeanList(affixes, AffixVo.class);*/
+        //为每个主业务添加缓存
+        String key = RedisConstant.AFFIXSERVICE_FINDAFFIXBYBUSINESSID +affixVo.getBusinessId();
+        return redisCacheService.listCache(()->{
+            AffixExample example = new AffixExample();
+            example.createCriteria().andBusinessIdEqualTo(affixVo.getBusinessId());
+            List<Affix> affixes = affixMapper.selectByExample(example);
+            return BeanConv.toBeanList(affixes, AffixVo.class);
+        }, key);
     }
 }
